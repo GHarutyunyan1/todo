@@ -7,21 +7,41 @@ import { Button } from '@material-ui/core';
 
 class ToDoAddPanel extends React.Component {
   state ={
-    items: [],
+    items: [{
+      id: 1,
+      todo: "test1",
+      checkt: true,
+    }],
     inputValue: "",
   }
-  addItem = ()=>{
-    return 1; 
-  }
+  
   handleChange = (event) => {
     this.setState({inputValue: event.target.value})
   };
   addItem = () => {
-    let id = (this.state.items.length-1) +1;
-    let item = this.state.items.concat([{id:id, todo: this.state.inputValue, checkd:false}]);
+    if(this.state.inputValue.trim().length < 1 ){
+      return null;
+    }
+    let id = (this.state.items.length) + 1;
+    let item = this.state.items.concat([{id:id, todo: this.state.inputValue, checkt:false}]);
     this.setState({items: item, inputValue:"",});
   }
+  handelChechet = (itemId) => {
+    let newItems = this.state.items.map(item =>{
+      if(item.id === itemId){
+        item.checkt = !item.checkt;
+        return item;
+      }else{
+        return item
+      }
+    })
+    this.setState({items:newItems})
+  }
+  itemDelete = (itemId) => {
+    this.setState({items: this.state.items.filter(item => item.id !== itemId)})
+  }
   render(){
+   // console.log(this.state.items)
     return (
       <div className="addPanelDiv">  
           <TextField
@@ -38,7 +58,11 @@ class ToDoAddPanel extends React.Component {
             onClick={this.addItem} 
             name="plus">Add Item 
           </Button>
-          <ToDoList list={this.state.items}/>
+          <ToDoList 
+            itemDelete={this.itemDelete}
+            handelChechet={this.handelChechet} 
+            list={this.state.items}
+          />
       </div>
     );
   }
